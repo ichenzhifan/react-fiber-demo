@@ -1,4 +1,7 @@
 
+// 下一个单元任务
+// render函数中初始化第一个任务.
+let nextUnitOfWork = null;
 
 function createElement(type, props, ...children) {
   return {
@@ -44,6 +47,29 @@ function render(vdom, container) {
 
   container.appendChild(dom);
 }
+
+/**
+ * 调度我们的渲染或diff任务
+ * @param {*} deadline 
+ */
+function workLoop(deadline) {
+  // 有下一个任务, 并且当前的帧还没有结束
+  while (nextUnitOfWork && deadline.timeRemaining() > 1) {
+    nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
+  }
+
+  requestIdleCallback(workLoop);
+}
+
+/**
+ * 根据当前的任务, 获取下一个任务.
+ * @param {*} fiber 
+ */
+function performUnitOfWork(fiber) {
+
+}
+
+requestIdleCallback(workLoop)
 
 export default {
   createElement,
